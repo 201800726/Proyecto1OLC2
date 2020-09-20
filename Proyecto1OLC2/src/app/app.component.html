@@ -1,67 +1,163 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <h5>MatrioshTS</h5>
+</nav>
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">DETECTOR DE COPIAS</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02"
-      aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+<div style="  margin-right: 100px;margin-left: 100px; margin-top: 20px;">
+  <div id="app" class=" row pt-6">
+    <div class="col-lg-6">
+      <h5>EDITOR</h5>
 
-    <div class="collapse navbar-collapse" id="navbarColor02">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-            aria-expanded="false">ARCHIVO</a>
-          <div class="dropdown-menu">
-            <input type='file' accept='.java' onchange='openFile(event)'><br>
-            <a class="dropdown-item" href="#" id="create">ERRORES</a>
-            <a download="Errores.html" id="downloadlink" style="display: none">Download</a>
-            <a class="dropdown-item" id="create6" href="#">GUARDAR</a>
-            <a download="Edicion.cs" id="downloadlink6" style="display: none">Download</a>
-          </div>
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" data-toggle="tab" href="#entrada">ENTRADA</a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-            aria-expanded="false">REPORTES</a>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="#" id="create3">COPIAS</a>
-            <a download="SalidaPython.py" id="downloadlink3" style="display: none">Download</a>
-          </div>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" href="#salida">SALIDA</a>
         </li>
       </ul>
-      <form class="form-inline my-4 my-lg-0">
-        <button type="button" class="btn btn-danger" onclick="window.close();">SALIR</button>
-      </form>
-    </div>
-  </nav>
+      <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade active show" id="entrada">
 
-  <div class="container">
-    <div id="app" class=" row pt-4">
-      <div class="col-lg-6">
-        <h2>PRINCIPAL</h2>
-        <ul class="nav nav-tabs" id="contenedor">
-        </ul>
-
-        <div id="contenido" class="tab-content">
-
+          <ngx-codemirror name="holi"
+          [options]="{
+            lineNumbers: true,
+            theme: 'yonce',
+            mode: 'javascript',
+            scrollbarStyle: 'overlay'
+          }" [(ngModel)]="obj" (ngModelChange)="setEditorContent($event)">
+          </ngx-codemirror>
         </div>
-        <textarea class="form-control" id="consola" rows="3"
-          style="margin-top: 0px; margin-bottom: 0px; height: 600px;"></textarea>
-        <br>
+        <div class="tab-pane fade" id="salida">
 
+          <ngx-codemirror name="holi2"
+          [options]="{
+            lineNumbers: true,
+            theme: 'yonce',
+            mode: 'javascript',
+            scrollbarStyle: 'overlay'
+          }" [(ngModel)]="obj2" (ngModelChange)="setEditor2Content($event)">
+          </ngx-codemirror>
+        </div>
       </div>
-      <div class="col-lg-6">
+
+
+    </div>
+    <div class="col-lg-6">
+      <div id="app" class=" row pt-2">
+        <div class="col">
+          <button type="button" class="btn btn-outline-success" onclick="Conn()">TRADUCIR</button>
+        </div>
+        <div class="col">
+          <button type="button" class="btn btn-outline-info" onclick="Conn()">EJECUTAR</button>
+        </div>
+        <div class="col">
+          <button type="button" class="btn btn-outline-warning" onclick="Conn()">ERRORES</button>
+        </div>
+        <div class="col">
+          <button type="button" class="btn btn-outline-primary" onclick="Conn()">AST</button>
+        </div>
+      </div>
+      <div class="form-group">
         <br>
-        <button type="button" class="btn btn-success" onclick="Conn()">ANALIZAR</button>
-        <br>
+        <h5>CONSOLA</h5>
         <div class="form-group">
-          <br>
-          <h2>SALIDAS</h2>
-          <div class="form-group">
-            <textarea readonly class="form-control" id="consola" rows="3"
-              style="margin-top: 0px; margin-bottom: 0px; height: 200px;"></textarea>
+          <textarea readonly class="form-control" id="consola" rows="3"
+            style="margin-top: 0px; margin-bottom: 0px; height: 200px;  background-color:#1b1c1d; color:#ffffff; border: solid #f02278; font: bold 90% monospace; font-size: large;"></textarea>
+        </div>
+        <h5>REPORTES</h5>
+        <div class="root" id="ast"></div>
+
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#error">ERRORES</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#arbol">AST</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#simbolos">TABLA DE SiMBOLOS</a>
+          </li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+          <div class="tab-pane fade active show" id="error">
+            <table class="table table-hover">
+              <thead>
+                <tr class="table-active">
+                  <th scope="col">TIPO</th>
+                  <th scope="col">DESCRIPCION</th>
+                  <th scope="col">LINEA</th>
+                  <th scope="col">COLUMNA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Sintactico</td>
+                  <td>Se esperaba "==", en lugar se encontró "="</td>
+                  <td>112</td>
+                  <td>15</td>
+                </tr>
+                <tr class="table-active">
+                  <td>Semantico</td>
+                  <td>El tipo string no puede multiplicarse con un numeric</td>
+                  <td>80</td>
+                  <td>5</td>
+                </tr>
+                <tr>
+                  <td>Sintactico</td>
+                  <td>Se esperaba la palabra reservada "if" en su lugar se encontró “else” </td>
+                  <td>1000</td>
+                  <td>10</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <h2>REPORTE AST</h2>
-          <div class="root" id = "ast"></div>
+          <div class="tab-pane fade" id="arbol">
+            <img [src]="'/assets/img/ast.png'" alt="image" width="650" height="305">
+          </div>
+          <div class="tab-pane fade" id="simbolos">
+            <table class="table table-hover">
+              <thead>
+                <tr class="table-active">
+                  <th scope="col">NOMBRE</th>
+                  <th scope="col">TIPO</th>
+                  <th scope="col">AMBITO</th>
+                  <th scope="col">FILA</th>
+                  <th scope="col">COLUMNA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Temp</td>
+                  <td>string</td>
+                  <td>global</td>
+                  <td>5</td>
+                  <td>8</td>
+                </tr>
+                <tr class="table-active">
+                  <td>A</td>
+                  <td>number</td>
+                  <td>local</td>
+                  <td>10</td>
+                  <td>7</td>
+                </tr>
+                <tr>
+                  <td>B</td>
+                  <td>number</td>
+                  <td>local</td>
+                  <td>12</td>
+                  <td>5</td>
+                </tr>
+                <tr class="table-active">
+                  <td>C</td>
+                  <td>boolean</td>
+                  <td>local</td>
+                  <td>13</td>
+                  <td>10</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
+  </div>
